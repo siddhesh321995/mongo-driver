@@ -457,7 +457,7 @@ MongoDBManager.prototype.deleteOneDocProm = async function deleteOneDocProm(coll
  * Configures mongoclient.
  * @param {MongoDBManagerConfiguration} attr Attrubites for configuration
  */
-MongoDBManager.configure = function configure(attr) {
+MongoDBManager.configure = function configure(attr = {}) {
   if (attr.hasCert === void 0) { attr.hasCert = true; }
 
   MongoDBManager.CONNECTION_STRING = attr.connectionString;
