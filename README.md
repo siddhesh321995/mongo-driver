@@ -37,7 +37,7 @@ await MongoDriver.MongoDBManager.getInstance().getDocumentsByProm(collectionName
 ```
 
 ## Complete Documentation
-[a relative link](DOCUMENTATION.md) Click here to checkout complete documentation.
+[Click here](DOCUMENTATION.md) to checkout complete documentation.
 
 ## Features:
 - Supports Insert, Fetch, Delete, Update documents.
