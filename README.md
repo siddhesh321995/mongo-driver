@@ -36,6 +36,9 @@ await MongoDriver.MongoDBManager.getInstance().insertDocProm({ 'id': 1, 'string'
 await MongoDriver.MongoDBManager.getInstance().getDocumentsByProm(collectionName, { 'id': rndId });
 ```
 
+## Complete Documentation
+[a relative link](DOCUMENTATION.md) Click here to checkout complete documentation.
+
 ## Features:
 - Supports Insert, Fetch, Delete, Update documents.
 - Simple light weight driver for your mongodb.
