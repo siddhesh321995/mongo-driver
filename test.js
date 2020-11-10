@@ -6,6 +6,11 @@ const hasCert = false;
 const certPath = '';
 const dbName = 'cmsone';
 const collectionName = 'testcollection';
+const isDatabaseTest = false;
+
+if (isDatabaseTest) {
+  require('./database.test');
+}
 
 describe('Mongo Driver Tests', () => {
   describe('Class level tests', () => {

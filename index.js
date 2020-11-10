@@ -21,6 +21,8 @@ const makeConnection = (onConnection, onConnectionFail) => {
   }
   const opts = (MongoDBManager.HAS_CERT) ? { sslCA: cert } : { useNewUrlParser: true };
 
+  opts.useUnifiedTopology = true;
+
   return new Promise((res, rej) => {
     MongoClient.connect(MongoDBManager.CONNECTION_STRING, opts, (err, client) => {
       if (err) {
