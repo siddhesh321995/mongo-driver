@@ -8,13 +8,13 @@ Simple basic driver for node and mongo db combination
 ## Installation:
 
 ```
-npm install mongo-driver --save
+npm install mongo-driverify --save
 ```
 
 
 Setup your Mongo Driver
 ```
-const MongoDriver = require('mongo-driver');
+const MongoDriver = require('mongo-driverify');
 
 MongoDriver.MongoDBManager.configure({
     connectionString: 'mongodb+srv://XXXX:XXXX@XXXX-XXXX.mongodb.net/XXXX',
@@ -25,9 +25,14 @@ MongoDriver.MongoDBManager.configure({
 ```
 
 ## Usage:
+
+### Insert documents
 ```
 await MongoDriver.MongoDBManager.getInstance().insertDocProm({ 'id': 1, 'string': 'abc', 'number': 10 }, collectionName);
+```
 
+### Fetch documents
+```
 await MongoDriver.MongoDBManager.getInstance().getDocumentsByProm(collectionName, { 'id': rndId });
 ```
 
