@@ -1,9 +1,9 @@
 # mongo-driver
 Simple basic driver for node and mongo db combination
 
-[![Build Status](https://travis-ci.com/siddhesh321995/mongo-driver.svg?branch=master)](https://travis-ci.com/siddhesh321995/cmsone-api)
-![Node.js CI](https://github.com/siddhesh321995/mongo-driver/workflows/Node.js%20CI/badge.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/siddhesh321995/mongo-driver/badge.svg?branch=master)](https://coveralls.io/github/siddhesh321995/cmsone-api?branch=master)
+[![Build Status](https://travis-ci.com/siddhesh321995/mongo-driver.svg?branch=main)](https://travis-ci.com/siddhesh321995/mongo-driver)
+![Node.js CI](https://github.com/siddhesh321995/mongo-driver/workflows/Node.js%20CI/badge.svg?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/siddhesh321995/mongo-driver/badge.svg?branch=main)](https://coveralls.io/github/siddhesh321995/cmsone-api?branch=main)
 
 ## Installation:
 
@@ -33,7 +33,7 @@ await MongoDriver.MongoDBManager.getInstance().insertDocProm({ 'id': 1, 'string'
 
 ### Fetch documents
 ```
-await MongoDriver.MongoDBManager.getInstance().getDocumentsByProm(collectionName, { 'id': rndId });
+await MongoDriver.MongoDBManager.getInstance().getDocumentsByProm(collectionName, { 'id': 1 });
 ```
 
 ## Complete Documentation
