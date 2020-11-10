@@ -1,6 +1,6 @@
 {
   "name": "mongo-driverify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple basic driver for node and mongo db combination",
   "main": "index.js",
   "scripts": {
