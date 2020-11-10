@@ -26,20 +26,25 @@ MongoDriver.MongoDBManager.configure({
 
 ## Usage:
 
+### Get driver instance
+```
+const driver = MongoDriver.MongoDBManager.getInstance();
+```
+
 ### Insert documents
 ```
-await MongoDriver.MongoDBManager.getInstance().insertDocProm({ 'id': 1, 'string': 'abc', 'number': 10 }, collectionName);
+await driver.insertDocProm({ 'id': 1, 'string': 'abc', 'number': 10 }, collectionName);
 ```
 
 ### Fetch documents
 ```
-await MongoDriver.MongoDBManager.getInstance().getDocumentsByProm(collectionName, { 'id': 1 });
+await driver.getDocumentsByProm(collectionName, { 'id': 1 });
 ```
 
 ## Complete Documentation
-[Click here](DOCUMENTATION.md) to checkout complete documentation.
+[Click here](DOCUMENTATION.md) to checkout complete documentation or View Documentation page [here](https://siddhesh321995.github.io/mongo-driver/)
 
 ## Features:
-- Supports Insert, Fetch, Delete, Update documents.
+- Supports Insert, Fetch, Delete, Update document etc functionality.
 - Simple light weight driver for your mongodb.
 - Only 1 dependency.
