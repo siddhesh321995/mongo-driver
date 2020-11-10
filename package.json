@@ -1,0 +1,34 @@
+{
+  "name": "mongo-driver",
+  "version": "1.0.0",
+  "description": "Simple basic driver for node and mongo db combination",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siddhesh321995/mongo-driver.git"
+  },
+  "engines": {
+    "node": "12.16.1"
+  },
+  "keywords": [
+    "Util",
+    "MongoDB",
+    "Node"
+  ],
+  "author": "Siddhesh Kulkarni",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/siddhesh321995/mongo-driver/issues"
+  },
+  "homepage": "https://github.com/siddhesh321995/mongo-driver#readme",
+  "dependencies": {
+    "mongodb": "^3.6.3"
+  },
+  "devDependencies": {
+    "mocha": "^8.2.1",
+    "should": "^13.2.3"
+  }
+}
