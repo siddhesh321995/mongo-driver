@@ -1,11 +1,14 @@
 {
   "name": "mongo-driverify",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple basic driver for node and mongo db combination",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
+  "files": [
+    "index.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/siddhesh321995/mongo-driver.git"
