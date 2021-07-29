@@ -2,6 +2,14 @@ const MongoClient = require('mongodb').MongoClient;
 const Db = require('mongodb').Db;
 const fs = require('fs');
 
+class MongoDBError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "MongoDBError";
+    this.httpCode = 500;
+  }
+}
+
 /**
  * Creates connection with mongodb, if fails, throws error
  * @param {(client:MongoClient)=>void} onConnection Callback after connection is made
@@ -145,6 +153,39 @@ MongoDBManager.prototype.getAllDocuments = function getAllDocuments(collectionNa
       successCb(result);
     });
   }, failCb);
+};
+
+
+/**
+ * Fetches all documents in given collection
+ * @param {string} collectionName name of collection
+ * @param {Db} dbObj Database connection object
+ */
+MongoDBManager.prototype.getAllDocumentsProm = async function getAllDocumentsProm(collectionName, dbObj = void 0) {
+  let closeClient = false;
+  let client;
+  if (dbObj == void 0) {
+    client = await makeConnection();
+    dbObj = client.db(MongoDBManager.DATABASE_NAME);
+    closeClient = true;
+  }
+
+  return new Promise(async (res, rej) => {
+    try {
+      dbObj.collection(collectionName).find({}).toArray(function (err, result) {
+        if (closeClient) {
+          client.close();
+        }
+        if (err) {
+          rej(err);
+          return;
+        }
+        res(result);
+      });
+    } catch (err) {
+      rej(err);
+    }
+  });
 };
 
 /**
@@ -425,7 +466,6 @@ MongoDBManager.prototype.deleteDocument = async function deleteDocument(collecti
 };
 
 
-
 /**
  * Updates one document from collection.
  * @param {string} collectionName name of collection
@@ -450,6 +490,37 @@ MongoDBManager.prototype.deleteOneDocProm = async function deleteOneDocProm(coll
     return resp;
   });
 };
+
+/**
+ * Updates multiple documents from collection.
+ * @param {string} collectionName name of collection
+ * @param {Object} filter MongoDB supported Filter.
+ * @param {Object} set Updating object.
+ * @param {Db} db Database connection object to reuse.
+ * @returns 
+ */
+MongoDBManager.prototype.updateManyProm = (collectionName, filter, set, db = void 0) => {
+  return new Promise(async (res, rej) => {
+    let closeClient = false;
+    let client;
+    if (db == void 0) {
+      client = await makeConnection();
+      dbObj = client.db(MongoDBManager.DATABASE_NAME);
+      closeClient = true;
+    }
+
+    db.collection(collectionName).updateMany(filter, set, (err, result) => {
+      if (closeClient) {
+        client.close();
+      }
+      if (err) {
+        rej(err);
+      } else {
+        res(result);
+      }
+    });
+  });
+}
 
 /**
  * @typedef {{connectionString:string;certPath:string;dbName:string;hasCert?:boolean}} MongoDBManagerConfiguration
@@ -479,19 +550,36 @@ MongoDBManager.getInstance = function getInstance() {
   return MongoDBManager.INSTANCE;
 };
 
+/**
+ * @class MGConnection
+ * @example
+ * ```
+ * const { conn, db } = await MGConnection.getConnection();
+ * await MongoDBManager.getInstance().updateManyProm(...., db);
+ * await MongoDBManager.getInstance().deleteOneDocProm(...., db);
+ * conn.closeConnection();
+ * ```
+ */
 class MGConnection {
   /**
    * @type {MongoClient}
    */
   client;
+
   /**
    * @type {{[id:string]:Db}
    */
   db = {};
+
   constructor(attr = {}) {
 
   }
 
+  /**
+   * Opens connection to multiple database.
+   * @param {string[]} dbNames Database names in the instance to connect to.
+   * @returns 
+   */
   async openConnection(dbNames = [MongoDBManager.DATABASE_NAME]) {
     this.client = await makeConnection();
     for (const dbName of dbNames) {
@@ -501,13 +589,193 @@ class MGConnection {
     return this.client;
   }
 
+  /**
+   * Returns default selected database.
+   * @returns 
+   */
+  getDefaultDb() {
+    return this.db[MongoDBManager.DATABASE_NAME];
+  }
+
+  /**
+   * Creates a default connection and return default db.
+   * @returns 
+   */
+  static async getConnection() {
+    const conn = new MGConnection();
+    await conn.openConnection();
+    return { conn, db: conn.getDefaultDb() };
+  }
+
+  /**
+   * Closes connection to all the Mongo DB Database.
+   */
   closeConnection() {
     this.client.close();
+  }
+}
+
+class IDatabaseManger {
+  /**
+   * Collection name in case of mongodb manager.
+   */
+  entityName = '';
+
+  /**
+   * Primary field name
+   */
+  primaryFieldName = '';
+
+  constructor(attr = {}) {
+
+  }
+
+  /**
+   * Inserts new data into the database.
+   * @param {any} data Data to insert to db.
+   * @param {Db} connDb Optional, existing db connection object.
+   * @returns {Promise<any>}
+   */
+  insert(data, connDb = void 0) {
+  }
+
+  /**
+   * Fetches data from database. Return in form of array.
+   * @param {any} query Valid Mongodb query
+   * @param {{query:any;sort:any;limit:number;skip:number}} options options supporting db fetch.
+   * @param {Db} connDb Optional, existing db connection object.
+   * @returns {Promise<any>}
+   */
+  get(query = void 0, options = null, connDb = void 0) {
+  }
+
+  /**
+   * 
+   * @param {string} fieldName Max field name.
+   * @param {string} idField unique field name.
+   * @param {Db} connDb Optional, existing db connection object.
+   * @returns {Promise<number>}
+   */
+  max(fieldName, idField, connDb = void 0) {
+  }
+
+  /**
+   * Updates data in database.
+   * @param {Object} query Query to filter
+   * @param {any} newData part of data to update.
+   * @param {Db} connDb Optional, existing db connection object.
+   * @returns {Promise<any>}
+   */
+  update(query, newData, connDb = void 0) {
+  }
+
+  /**
+   * Deletes data from database.
+   * @param {Object} query Query to filter
+   * @param {Db} connDb Optional, existing db connection object.
+   * @returns {Promise<any>}
+   */
+  delete(query, connDb = void 0) {
+  }
+
+  /**
+   * Creates a default connection and return default db.
+   * @returns {Promise<{
+   * conn: MGConnection;
+   * db: Db;
+   * }>}
+   */
+  static getConnection() {
+    return MGConnection.getConnection();
+  }
+}
+
+class MongoDBManagerV2 extends IDatabaseManger {
+  constructor(attr = {}) {
+    /**
+     * Collection name in case of mongodb manager.
+     */
+    this.entityName = '';
+
+    /**
+     * Primary field name
+     */
+    this.primaryFieldName = '';
+
+    Object.assign(this, attr);
+  }
+
+  /**
+   * Inserts new data into the database.
+   * @param {any} data Data to insert to db.
+   * @param {Db} connDb Optional, existing db connection object.
+   */
+  insert(data, connDb = void 0) {
+    return MongoDBManager.getInstance().insertDocProm(data, this.entityName, connDb);
+  }
+
+  /**
+   * Fetches data from database. Return in form of array.
+   * @param {any} query Valid Mongodb query
+   * @param {{query:any;sort:any;limit:number;skip:number}} options options supporting db fetch.
+   * @param {Db} connDb Optional, existing db connection object.
+   */
+  get(query = void 0, options = null, connDb = void 0) {
+    if (options) {
+      return MongoDBManager.getInstance().getDocumentsParamProm(this.entityName, options, connDb);
+    }
+    if (query === void 0) {
+      return MongoDBManager.getInstance().getAllDocumentsProm(this.entityName, connDb);
+    }
+    return MongoDBManager.getInstance().getDocumentsByProm(this.entityName, query, connDb);
+  }
+
+  /**
+   * 
+   * @param {string} fieldName Max field name.
+   * @param {string} idField unique field name.
+   * @param {Db} connDb Optional, existing db connection object.
+   * @returns {Promise<number>}
+   */
+  max(fieldName, idField, connDb = void 0) {
+    return MongoDBManager.getInstance().getMax(this.entityName, fieldName, idField, connDb);
+  }
+
+  /**
+   * Updates data in database.
+   * @param {Object} query Query to filter
+   * @param {any} newData part of data to update.
+   * @param {Db} connDb Optional, existing db connection object.
+   */
+  update(query, newData, connDb = void 0) {
+    return MongoDBManager.getInstance().updateManyProm(this.entityName, query, newData, connDb);
+  }
+
+  /**
+   * Deletes data from database.
+   * @param {Object} query Query to filter
+   * @param {Db} connDb Optional, existing db connection object.
+   */
+  delete(query, connDb = void 0) {
+    return MongoDBManager.getInstance().deleteOneDocProm(this.entityName, query, void 0, connDb);
+  }
+
+  /**
+   * Creates a default connection and return default db.
+   * @returns {Promise<{
+   * conn: MGConnection;
+   * db: Db;
+   * }>}
+   */
+  static getConnection() {
+    return MGConnection.getConnection();
   }
 }
 
 module.exports = {
   MongoDBManager: MongoDBManager,
   MGConnection,
-  Db
+  Db,
+  IDatabaseManger,
+  MongoDBManagerV2
 };
