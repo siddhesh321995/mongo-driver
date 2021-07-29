@@ -692,6 +692,8 @@ class IDatabaseManger {
 
 class MongoDBManagerV2 extends IDatabaseManger {
   constructor(attr = {}) {
+    super(attr);
+
     /**
      * Collection name in case of mongodb manager.
      */

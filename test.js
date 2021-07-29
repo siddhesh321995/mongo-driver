@@ -54,3 +54,14 @@ describe('Mongo Driver Tests', () => {
 
   }); */
 });
+
+
+describe('Mongo Driver V2 Tests', () => {
+  describe('Class level tests', () => {
+    it('Construct MongoDBManagerV2', (done) => {
+      const inst = new MongoDriver.MongoDBManagerV2({ entityName: 'myentity' });
+      (inst.entityName).should.equal('myentity');
+      done();
+    });
+  });
+});
